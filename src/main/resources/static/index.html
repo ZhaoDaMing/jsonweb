@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Byte Array To JSON</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+</head>
+<body>
+
+<h1 align="center">JSON反解析</h1>
+<div id="jsontext" >
+    <!--左边字节数组-->
+    <textarea id="bytetext"  v-model="message" placeholder="在此输入字节数组 eg:[-5,3,23]" style="float:left;height:1024px;width: 40%; padding: 10px 10px 10px 30px; border-radius: 0px; resize: none; outline: none; border: 1px solid rgb(238, 238, 238);"></textarea>
+
+    <div style="float:left;width: 50%;height:1024px;padding: 10px 10px 10px 30px; border: 1px solid rgb(238, 238, 238); border-radius: 0px;">
+       {{rightMsg}}
+    </div>
+</div>
+
+<script>
+    var url = 'http://3.7.80.250:8080';
+    var app = new Vue({
+        el: '#jsontext',
+        data: {
+            message: '',
+            rightMsg: '',
+        },
+        computed:{
+
+        },
+        watch: {
+            message(str) {
+                this.parseByteString(str)
+            }
+        },
+        methods : {
+            parseByteString(str) {
+                var data = new FormData();
+                data.append("byteString", str);
+
+                var xhr = new XMLHttpRequest();
+                xhr.withCredentials = true;
+                const that = this
+                xhr.addEventListener("readystatechange",function() {
+                    if(this.readyState === 4){
+                        console.log(this.responseText);
+                        that.rightMsg = this.responseText;
+                    }
+                });
+
+                xhr.open("POST", url + "/unzipByteString");
+                xhr.send(data);
+            }
+        }
+    })
+</script>
+
+</body>
+</html>
